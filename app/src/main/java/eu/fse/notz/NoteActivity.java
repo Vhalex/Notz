@@ -1,3 +1,5 @@
+package eu.fse.notz;
+
 import android.app.Activity;
 
 /**
