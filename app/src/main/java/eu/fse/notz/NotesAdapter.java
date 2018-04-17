@@ -2,7 +2,9 @@ package eu.fse.notz;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -13,7 +15,7 @@ import eu.fse.notz.R;
  * Created by Amministratore on 12/04/2018.
  */
 
-public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder>{
+public class NotesAdapter extends RecyclerView.Adapter {
 
     private ArrayList<Note> mDataset;
 
@@ -21,11 +23,15 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder>{
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
-        public TextView mTextView;
+        public TextView titleTv;
+        public TextView descriptionTv;
 
-        public ViewHolder(TextView v) {
-            super(v);
-            mTextView = v;
+
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            titleTv=(TextView) itemView.findViewById(R.id.title_tv);
+            descriptionTv= (TextView) itemView.findViewById(R.id.description_tv);
         }
     }
 
@@ -36,17 +42,17 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.ViewHolder>{
 
     @Override
     public NotesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        TextView v = (TextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_main, parent, false);
+     View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_note, parent, false);
         ViewHolder vh = new ViewHolder(v);
         return vh;
-
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-       NotesAdapter.ViewHolder noteVh=(NotesAdapter.ViewHolder)holder;
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        NotesAdapter.ViewHolder noteVh=(NotesAdapter.ViewHolder)holder;
         Note currentNote= mDataset.get(position);
-        noteVh.mTextView.setText(currentNote.getTitle());
+        noteVh.titleTv.setText(currentNote.getTitle());
+        noteVh.descriptionTv.setText(currentNote.getDescription());
     }
 
 
