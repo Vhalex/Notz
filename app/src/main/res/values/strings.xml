@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Notz</string>
+    <string name="title_d">Title</string>
+    <string name="description_d">Description</string>
 </resources>
