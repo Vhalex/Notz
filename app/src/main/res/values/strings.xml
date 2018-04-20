@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Notz</string>
-    <string name="title_d">Title</string>
-    <string name="description_d">Description</string>
+
+    <string name="titolo_dialog">titolo</string>
+    <string name="descrizione_dialog">descrizione</string>
+    <string name="titolo_add_note">Nuovo Nota</string>
+    <string name="dialog_positive_button">Aggiungi</string>
+    <string name="dialog_negative_button">Annulla</string>
 </resources>

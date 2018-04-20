@@ -55,6 +55,12 @@ public class NotesAdapter extends RecyclerView.Adapter {
         noteVh.descriptionTv.setText(currentNote.getDescription());
     }
 
+    public void addNote(Note note){
+        this.mDataset.add(0,note);
+        //notifyDataSetChanged();
+        notifyItemInserted(0);
+    }
+
 
 
     @Override
