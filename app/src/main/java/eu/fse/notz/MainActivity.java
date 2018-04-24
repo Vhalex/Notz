@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_main);
 
 
+
+
         mRecyclerView= (RecyclerView) findViewById(R.id.notes_rv);
         mRecyclerView.setHasFixedSize(true);
         addNoteButton = (FloatingActionButton) findViewById(R.id.fab);
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity  {
         Note spesa=new Note("spesa", "latte");
         myDataset.add(spesa);
 
-        mAdapter = new NotesAdapter(myDataset);
+        mAdapter = new NotesAdapter(myDataset, this);
         mRecyclerView.setAdapter(mAdapter);
 
         addNoteButton.setOnClickListener(new View.OnClickListener() {
@@ -62,8 +64,6 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
     }
-
-
 
     private void showDialog(){
 

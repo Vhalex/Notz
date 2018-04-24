@@ -1,12 +1,18 @@
 package eu.fse.notz;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EdgeEffect;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.NotActiveException;
 import java.util.ArrayList;
 
 import eu.fse.notz.R;
@@ -18,25 +24,48 @@ import eu.fse.notz.R;
 public class NotesAdapter extends RecyclerView.Adapter {
 
     private ArrayList<Note> mDataset;
+    private Context context;
 
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView titleTv;
         public TextView descriptionTv;
 
 
 
-        public ViewHolder(View itemView) {
-            super(itemView);
+
+        public ViewHolder(final View itemView) {
+            super(itemView);//rappresenta intera riga
+
             titleTv=(TextView) itemView.findViewById(R.id.title_tv);
+
             descriptionTv= (TextView) itemView.findViewById(R.id.description_tv);
+
+
+
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    
+                    Intent intent= new Intent(context, NotActiveException.class);
+                    intent.putExtra("Titolo", titleTv.getText().toString());
+                    intent.putExtra("Descrizione",descriptionTv.getText().toString());
+
+                    context.startActivity(intent);
+
+
+
+                }
+            });
         }
     }
 
-    public NotesAdapter(ArrayList<Note> myDataset){
+    public NotesAdapter(ArrayList<Note> myDataset, Context context){
         mDataset = myDataset;
+        this.context=context;
     }
 
 
@@ -57,7 +86,6 @@ public class NotesAdapter extends RecyclerView.Adapter {
 
     public void addNote(Note note){
         this.mDataset.add(0,note);
-        //notifyDataSetChanged();
         notifyItemInserted(0);
     }
 
