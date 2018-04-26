@@ -40,7 +40,6 @@ public class NotesAdapter extends RecyclerView.Adapter {
             super(itemView);//rappresenta intera riga
 
             titleTv=(TextView) itemView.findViewById(R.id.title_tv);
-
             descriptionTv= (TextView) itemView.findViewById(R.id.description_tv);
 
 
@@ -49,12 +48,17 @@ public class NotesAdapter extends RecyclerView.Adapter {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    
-                    Intent intent= new Intent(context, NotActiveException.class);
-                    intent.putExtra("Titolo", titleTv.getText().toString());
-                    intent.putExtra("Descrizione",descriptionTv.getText().toString());
 
-                    context.startActivity(intent);
+                    Intent intent = new Intent(context, NoteActivity.class);
+
+                    String title = mDataset.get(getAdapterPosition()).getTitle();
+                    String description = mDataset.get(getAdapterPosition()).getDescription();
+
+                    intent.putExtra("title",title);
+                    intent.putExtra("description",description);
+                    intent.putExtra("position",getAdapterPosition());
+
+                    ((MainActivity)context).startActivityForResult(intent,1001);
 
 
 
@@ -66,6 +70,28 @@ public class NotesAdapter extends RecyclerView.Adapter {
     public NotesAdapter(ArrayList<Note> myDataset, Context context){
         mDataset = myDataset;
         this.context=context;
+    }
+
+    public Note getNote(int index) {
+        return mDataset.get(index);
+    }
+
+
+    public void updateNote(int index,Note note){
+        mDataset.set(index,note);
+        notifyItemChanged(index);
+    }
+
+    public void updateNote(int index,String title, String description){
+
+        Note note = mDataset.get(index);
+
+        note.setTitle(title);
+        note.setDescription(description);
+        notifyItemChanged(index);
+
+
+
     }
 
 
@@ -87,6 +113,11 @@ public class NotesAdapter extends RecyclerView.Adapter {
     public void addNote(Note note){
         this.mDataset.add(0,note);
         notifyItemInserted(0);
+    }
+
+    public void removeNote(Note index){
+        this.mDataset.remove(index);
+        notifyItemRemoved(index);
     }
 
 

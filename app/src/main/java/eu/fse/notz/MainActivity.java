@@ -1,8 +1,10 @@
 package eu.fse.notz;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +26,8 @@ import eu.fse.notz.R;
 
 public class MainActivity extends AppCompatActivity  {
 
+    public static final int EDIT_REQUEST=1001;
+    public static final int RESUL_REMOVE_NOTE=1002;
     private RecyclerView mRecyclerView;
     private NotesAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -45,14 +49,11 @@ public class MainActivity extends AppCompatActivity  {
         mRecyclerView.setHasFixedSize(true);
         addNoteButton = (FloatingActionButton) findViewById(R.id.fab);
 
-        mLayoutManager = new LinearLayoutManager(this);
+        mLayoutManager = new StaggeredGridLayoutManager(2,
+                StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         myDataset=new ArrayList<>();
-        Note pinPalazzo=new Note("pin", "26634");
-        myDataset.add(pinPalazzo);
-        Note spesa=new Note("spesa", "latte");
-        myDataset.add(spesa);
 
         mAdapter = new NotesAdapter(myDataset, this);
         mRecyclerView.setAdapter(mAdapter);
@@ -65,10 +66,36 @@ public class MainActivity extends AppCompatActivity  {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == EDIT_REQUEST) {
+
+            if (resultCode == Activity.RESULT_OK) {
+
+                //getPosition from returnIntent
+                int editedNotePosition = data.getIntExtra("position", -1);
+
+                mAdapter.updateNote(editedNotePosition,
+                        data.getStringExtra("title"),
+                        data.getStringExtra("description"));
+
+
+            }
+
+        }
+        if(resultCode==RESUL_REMOVE_NOTE){
+            
+        }
+
+
+    }
+
+
     private void showDialog(){
 
         final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-        View dialogView= LayoutInflater.from(this).inflate(R.layout.dialog_add_note,null);
+        final View dialogView= LayoutInflater.from(this).inflate(R.layout.dialog_add_note,null);
 
         alertBuilder.setView(dialogView);
         alertBuilder.setTitle(R.string.titolo_add_note);
@@ -95,6 +122,7 @@ public class MainActivity extends AppCompatActivity  {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+
 
                     }
                 });

@@ -6,4 +6,6 @@
     <string name="titolo_add_note">Nuovo Nota</string>
     <string name="dialog_positive_button">Aggiungi</string>
     <string name="dialog_negative_button">Annulla</string>
+    <string name="confirm">conferma</string>
+    <string name="delete">elimina</string>
 </resources>
