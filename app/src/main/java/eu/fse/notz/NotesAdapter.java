@@ -76,6 +76,12 @@ public class NotesAdapter extends RecyclerView.Adapter {
         return mDataset.get(index);
     }
 
+    public void addNote(int index, Note note) {
+        mDataset.add(index, note);
+        notifyItemInserted(index);
+
+    }
+
 
     public void updateNote(int index,Note note){
         mDataset.set(index,note);
@@ -115,9 +121,9 @@ public class NotesAdapter extends RecyclerView.Adapter {
         notifyItemInserted(0);
     }
 
-    public void removeNote(Note index){
+    public void removeNote(int index){
         this.mDataset.remove(index);
-        notifyItemRemoved(index);
+       notifyItemRemoved(index);
     }
 
 

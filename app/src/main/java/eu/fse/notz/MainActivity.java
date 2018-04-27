@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AlertDialogLayout;
@@ -27,7 +28,7 @@ import eu.fse.notz.R;
 public class MainActivity extends AppCompatActivity  {
 
     public static final int EDIT_REQUEST=1001;
-    public static final int RESUL_REMOVE_NOTE=1002;
+    public static final int RESUL_REMOVE_NOTE=RESULT_FIRST_USER +1;
     private RecyclerView mRecyclerView;
     private NotesAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -41,10 +42,6 @@ public class MainActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
-
         mRecyclerView= (RecyclerView) findViewById(R.id.notes_rv);
         mRecyclerView.setHasFixedSize(true);
         addNoteButton = (FloatingActionButton) findViewById(R.id.fab);
@@ -66,8 +63,10 @@ public class MainActivity extends AppCompatActivity  {
         });
     }
 
+
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == EDIT_REQUEST) {
 
@@ -79,16 +78,26 @@ public class MainActivity extends AppCompatActivity  {
                 mAdapter.updateNote(editedNotePosition,
                         data.getStringExtra("title"),
                         data.getStringExtra("description"));
-
-
             }
+            if(resultCode == RESUL_REMOVE_NOTE){
+                final int editedNotePosition = data.getIntExtra("position", -1);
+                mAdapter.removeNote(editedNotePosition);
 
+
+                Snackbar.make(mRecyclerView,getString(R.string.delete),Snackbar.LENGTH_LONG)
+                        .setAction(R.string.cancel, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                Note note = new Note(data.getStringExtra("title"),
+                                        data.getStringExtra("description"));
+
+                                mAdapter.addNote(editedNotePosition,note);
+                            }
+                        })
+                        .show();
+            }
         }
-        if(resultCode==RESUL_REMOVE_NOTE){
-            
-        }
-
-
     }
 
 
@@ -122,13 +131,8 @@ public class MainActivity extends AppCompatActivity  {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
-
                     }
                 });
-
         alertBuilder.show();
-
-
     }
 }
