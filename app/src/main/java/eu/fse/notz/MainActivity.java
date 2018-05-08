@@ -13,9 +13,13 @@ import android.support.v7.widget.AlertDialogLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 
@@ -54,6 +58,8 @@ public class MainActivity extends AppCompatActivity  {
 
         mAdapter = new NotesAdapter(myDataset, this);
         mRecyclerView.setAdapter(mAdapter);
+
+        getNotesFromURL();
 
         addNoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,14 +112,14 @@ public class MainActivity extends AppCompatActivity  {
         final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
         final View dialogView= LayoutInflater.from(this).inflate(R.layout.dialog_add_note,null);
 
-        alertBuilder.setView(dialogView);
-        alertBuilder.setTitle(R.string.titolo_add_note);
 
 
         final EditText titleET=(EditText) dialogView.findViewById(R.id.dialog_title_et);
         final EditText descriptionET=(EditText) dialogView.findViewById(R.id.dialog_description_et);
 
-        alertBuilder.setPositiveButton(R.string.dialog_positive_button,
+        alertBuilder.setView(dialogView)
+                .setTitle(R.string.titolo_add_note)
+                .setPositiveButton(R.string.dialog_positive_button,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -121,18 +127,66 @@ public class MainActivity extends AppCompatActivity  {
                         String insertTitle=titleET.getText().toString();
                         String insertDescription=descriptionET.getText().toString();
 
-                        Note note = new Note(insertTitle, insertDescription);
-                        mAdapter.addNote(note);
+                        Note.NoteBuilder builder = new Note.NoteBuilder();
+                        builder
+                                .setTitle(insertTitle)
+                                .setDescription(insertDescription)
+                                .setId(12)
+                                .setShownOnTop(true);
+
+                        mAdapter.addNote(builder.build());
 
                     }
-                });
+                })
 
-        alertBuilder.setNegativeButton(R.string.dialog_negative_button,
+        .setNegativeButton(R.string.dialog_negative_button,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                     }
-                });
-        alertBuilder.show();
+                })
+        .create()
+                .show();
     }
+    private void getNotesFromURL() {
+
+        //Make HTTP call
+
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String url = "http://5af1bf8530f9490014ead894.mockapi.io/api/v1/notes";
+
+        // Request a string response from the provided URL.
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(
+                Request.Method.GET, // METHOD
+                url, // URL
+                null, // Body parameters
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        // TODO manage success
+                        Log.d("jsonRequest",response.toString());
+                        ArrayList<Note> noteListFromResponse = Note.getNotesList(response);
+                        mAdapter.addNotesList(noteListFromResponse);
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("jsonRequest",error.getMessage());
+                        Toast.makeText(MainActivity.this,
+                                error.getMessage(),
+                                Toast.LENGTH_LONG).show();
+
+                    }
+                });
+
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
+
+    }
+
+
 }
