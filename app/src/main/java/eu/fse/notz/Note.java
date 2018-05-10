@@ -41,11 +41,8 @@ public class Note {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
         }
-
         return list;
-
     }
 
     public Note(JSONObject jsonNote) {
@@ -57,7 +54,6 @@ public class Note {
         } catch (JSONException e) {
             Log.e("Note", e.getMessage());
         }
-
     }
 
 
