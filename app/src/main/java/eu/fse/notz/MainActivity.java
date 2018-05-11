@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.Loader;
 import android.os.Bundle;
 import android.os.Debug;
 import android.preference.PreferenceManager;
@@ -31,6 +32,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton addNoteButton;
 
     private ProgressBar loading;
+    String title = getResources().getString(R.string.titolo_dialog);
 
 
 
@@ -75,6 +79,11 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new NotesAdapter(myDataset, this);
         mRecyclerView.setAdapter(mAdapter);
 
+
+
+
+
+
         getNotesFromURL();
 
         addNoteButton.setOnClickListener(new View.OnClickListener() {
@@ -83,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 showDialog();
             }
         });
+
     }
 
 
@@ -163,6 +173,8 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
+
+
     private void getNotesFromURL() {
 
         //Make HTTP call
@@ -173,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
         String url = "http://5af1bf8530f9490014ead894.mockapi.io/api/v1/notes";
 
 
-        Response.Listener<JSONArray> successResponse =new Response.Listener<JSONArray>() {
+       /*Response.Listener<JSONArray> successResponse =new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 // TODO manage success
@@ -214,7 +226,36 @@ public class MainActivity extends AppCompatActivity {
                 errorResponse
                 );
 
+            queue.add(jsonRequest);*/
+
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                      loading.setVisibility(View.GONE);
+                        Log.d("jsonRequest", response.toString());
+
+                        try {
+                            JsonO result = response.getJSONArray("data");
+                            ArrayList<Note> noteListFromResponse = Note.getNotesList(result);
+                            mAdapter.addNotesList(noteListFromResponse);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+              loading.setVisibility(View.GONE);
+
+                Toast.makeText(MainActivity.this, "Si è verificato un errore: "+error.networkResponse.statusCode, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        // Add the request to the RequestQueue.
         queue.add(jsonRequest);
+
+
 
 
     }
