@@ -81,6 +81,15 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+        if(getIntent() != null){
+
+            Intent intent = getIntent();
+            if(intent.getAction().equals(Intent.ACTION_SEND)){
+                String title = intent.getStringExtra(Intent.EXTRA_TEXT);
+                showDialog(title);
+
+            }
+        }
 
 
 
@@ -130,9 +139,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    private void showDialog(){
+        showDialog(null);
+    }
 
 
-    private void showDialog() {
+    private void showDialog(String Tiltle) {
 
         final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
         final View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_note, null);
@@ -140,6 +152,8 @@ public class MainActivity extends AppCompatActivity {
 
         final EditText titleET = (EditText) dialogView.findViewById(R.id.dialog_title_et);
         final EditText descriptionET = (EditText) dialogView.findViewById(R.id.dialog_description_et);
+
+        if(title!= null) titleET.setText(title);
 
         alertBuilder.setView(dialogView)
                 .setTitle(R.string.titolo_add_note)
@@ -228,28 +242,37 @@ public class MainActivity extends AppCompatActivity {
 
             queue.add(jsonRequest);*/
 
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(
+                Request.Method.GET, // METHOD
+                url, // URL
+                null, // Body parameters
+                new Response.Listener<JSONArray>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                      loading.setVisibility(View.GONE);
+                    public void onResponse(JSONArray response) {
+                        // TODO manage success
+
+                        loading.setVisibility(View.GONE);
                         Log.d("jsonRequest", response.toString());
-
-                        try {
-                            JsonO result = response.getJSONArray("data");
-                            ArrayList<Note> noteListFromResponse = Note.getNotesList(result);
-                            mAdapter.addNotesList(noteListFromResponse);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        ArrayList<Note> noteListFromResponse = Note.getNotesList(response);
+                        mAdapter.addNotesList(noteListFromResponse);
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-              loading.setVisibility(View.GONE);
 
-                Toast.makeText(MainActivity.this, "Si è verificato un errore: "+error.networkResponse.statusCode, Toast.LENGTH_LONG).show();
-            }
+                },
+
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        loading.setVisibility(View.GONE);
+                        error.printStackTrace();
+
+                        Toast.makeText(MainActivity.this,
+                                "si è riscontrato un errore " + error.networkResponse.statusCode,
+                                Toast.LENGTH_LONG).show();
+
+                    }
+
         });
 
         // Add the request to the RequestQueue.
