@@ -21,6 +21,7 @@ public class Note {
         this.id = builder.id;
 
     }
+    public Note(){}
 
     public String getTitle() {
         return title;

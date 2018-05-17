@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity  {
     //private String[] myDataset={"nota1", "nota2"};
     private ArrayList<Note> myDataset;
     private FloatingActionButton addNoteButton;
+    private DatabaseHandler db;
 
 
 
@@ -49,8 +50,16 @@ public class MainActivity extends AppCompatActivity  {
         mLayoutManager = new StaggeredGridLayoutManager(2,
                 StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
-
+        db= new DatabaseHandler(this);
         myDataset=new ArrayList<>();
+
+       // myDataset.addAll(db.getAllNotes());
+
+
+
+
+
+
 
         mAdapter = new NotesAdapter(myDataset, this);
         mRecyclerView.setAdapter(mAdapter);
@@ -62,6 +71,7 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
     }
+
 
 
 
@@ -78,9 +88,11 @@ public class MainActivity extends AppCompatActivity  {
                 mAdapter.updateNote(editedNotePosition,
                         data.getStringExtra("title"),
                         data.getStringExtra("description"));
+                db.updateNote(mAdapter.getNote(editedNotePosition));
             }
             if(resultCode == RESUL_REMOVE_NOTE){
                 final int editedNotePosition = data.getIntExtra("position", -1);
+                db.deletNote(mAdapter.getNote(editedNotePosition));
                 mAdapter.removeNote(editedNotePosition);
 
 
@@ -93,46 +105,62 @@ public class MainActivity extends AppCompatActivity  {
                                         data.getStringExtra("description"));
 
                                 mAdapter.addNote(editedNotePosition,note);
+                                db.addNote(note);
                             }
                         })
                         .show();
             }
         }
     }
-
-
     private void showDialog(){
+        showDialog(null);
+    }
+
+
+
+    private void showDialog(String title){
 
         final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
         final View dialogView= LayoutInflater.from(this).inflate(R.layout.dialog_add_note,null);
-
-        alertBuilder.setView(dialogView);
-        alertBuilder.setTitle(R.string.titolo_add_note);
 
 
         final EditText titleET=(EditText) dialogView.findViewById(R.id.dialog_title_et);
         final EditText descriptionET=(EditText) dialogView.findViewById(R.id.dialog_description_et);
 
-        alertBuilder.setPositiveButton(R.string.dialog_positive_button,
+        if(title!= null) titleET.setText(title);
+
+        alertBuilder.setView(dialogView)
+                .setTitle(R.string.titolo_add_note)
+        .setPositiveButton(R.string.dialog_positive_button,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //
                         String insertTitle=titleET.getText().toString();
                         String insertDescription=descriptionET.getText().toString();
+                        Note.NoteBuilder noteBuilder = new Note.NoteBuilder();
+                        noteBuilder
+                                .setTitle(insertTitle)
+                                .setDescription(insertDescription)
+                                .setId(12)
+                                .setShownOnTop(true);
 
-                        Note note = new Note(insertTitle, insertDescription);
-                        mAdapter.addNote(note);
 
+                        mAdapter.addNote(noteBuilder.build());
+                        db.addNote(noteBuilder.build());
                     }
-                });
+                })
 
-        alertBuilder.setNegativeButton(R.string.dialog_negative_button,
+       .setNegativeButton(R.string.dialog_negative_button,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+
+
+
                     }
-                });
-        alertBuilder.show();
+                })
+                .create()
+        .show();
     }
 }
