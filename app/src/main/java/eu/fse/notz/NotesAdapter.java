@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EdgeEffect;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -28,10 +29,12 @@ public class NotesAdapter extends RecyclerView.Adapter {
 
 
 
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView titleTv;
         public TextView descriptionTv;
+        private ImageView favoriteBtn;
 
 
 
@@ -41,6 +44,7 @@ public class NotesAdapter extends RecyclerView.Adapter {
 
             titleTv=(TextView) itemView.findViewById(R.id.title_tv);
             descriptionTv= (TextView) itemView.findViewById(R.id.description_tv);
+            favoriteBtn=(ImageView) itemView.findViewById(R.id.favorite_btn);
 
 
 
@@ -114,6 +118,7 @@ public class NotesAdapter extends RecyclerView.Adapter {
         Note currentNote= mDataset.get(position);
         noteVh.titleTv.setText(currentNote.getTitle());
         noteVh.descriptionTv.setText(currentNote.getDescription());
+        
     }
 
     public void addNote(Note note){

@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity  {
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,13 +49,14 @@ public class MainActivity extends AppCompatActivity  {
         mRecyclerView.setHasFixedSize(true);
         addNoteButton = (FloatingActionButton) findViewById(R.id.fab);
 
+
         mLayoutManager = new StaggeredGridLayoutManager(2,
                 StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
         db= new DatabaseHandler(this);
         myDataset=new ArrayList<>();
 
-       // myDataset.addAll(db.getAllNotes());
+       myDataset.addAll(db.getAllNotes());
 
 
 

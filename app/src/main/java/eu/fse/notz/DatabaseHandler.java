@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * Created by Amministratore on 17/05/2018.
  */
 
-public class DatabaseHandler extends SQLiteOpenHelper{ //gestisce creazione del db e tabelle. Helper 
+public class DatabaseHandler extends SQLiteOpenHelper{ //gestisce creazione del db e tabelle. Helper
 
 
     // Notes Table Columns names
