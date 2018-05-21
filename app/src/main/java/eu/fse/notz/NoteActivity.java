@@ -26,7 +26,7 @@ public class NoteActivity extends AppCompatActivity {
         Button editDelateBtn;
         Intent intent;
         String title, description;
-    CheckBox favoriteCheck;
+        CheckBox favoriteCheck;
 
 
     @Override
@@ -54,12 +54,13 @@ public class NoteActivity extends AppCompatActivity {
 
 
                 int position = intent.getIntExtra("position", -1);
-                if(favoriteCheck.isChecked()) intent.putExtra("favorite", "true");
+
 
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("title", editedTitle);
                 returnIntent.putExtra("description", editedDescription);
                 returnIntent.putExtra("position", position);
+                if(favoriteCheck.isChecked()) returnIntent.putExtra("favorite", "true");
                 setResult(Activity.RESULT_OK, returnIntent);
 
 

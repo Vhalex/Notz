@@ -26,6 +26,8 @@ public class NotesAdapter extends RecyclerView.Adapter {
 
     private ArrayList<Note> mDataset;
     private Context context;
+    private  Note note;
+
 
 
 
@@ -92,12 +94,26 @@ public class NotesAdapter extends RecyclerView.Adapter {
         notifyItemChanged(index);
     }
 
-    public void updateNote(int index,String title, String description){
+    private void moveOnTop(Note note){
+
+        int index = mDataset.indexOf(note);
+        mDataset.remove(index);
+        mDataset.add(0, note);
+        notifyDataSetChanged();
+    }
+
+    public void updateNote(int index,String title, String description, boolean isFavorite){
 
         Note note = mDataset.get(index);
 
         note.setTitle(title);
         note.setDescription(description);
+        note.setShownOnTop(isFavorite);
+
+        if(isFavorite){
+            moveOnTop(note);
+            return;
+        }
         notifyItemChanged(index);
 
 
@@ -116,9 +132,10 @@ public class NotesAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         NotesAdapter.ViewHolder noteVh=(NotesAdapter.ViewHolder)holder;
         Note currentNote= mDataset.get(position);
+
         noteVh.titleTv.setText(currentNote.getTitle());
         noteVh.descriptionTv.setText(currentNote.getDescription());
-        
+        if(currentNote.isShowOnTop())noteVh.favoriteBtn.setVisibility(View.VISIBLE);
     }
 
     public void addNote(Note note){

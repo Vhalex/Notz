@@ -34,10 +34,10 @@ public class MainActivity extends AppCompatActivity  {
     private NotesAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     //private String[] myDataset={"nota1", "nota2"};
-    private ArrayList<Note> myDataset;
+
     private FloatingActionButton addNoteButton;
     private DatabaseHandler db;
-
+    private ArrayList<Note> myDataset;
 
 
 
@@ -53,16 +53,10 @@ public class MainActivity extends AppCompatActivity  {
         mLayoutManager = new StaggeredGridLayoutManager(2,
                 StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        db= new DatabaseHandler(this);
+
         myDataset=new ArrayList<>();
-
-       myDataset.addAll(db.getAllNotes());
-
-
-
-
-
-
+        db= new DatabaseHandler(this);
+        myDataset = db.getAllNotes();
 
         mAdapter = new NotesAdapter(myDataset, this);
         mRecyclerView.setAdapter(mAdapter);
@@ -83,14 +77,15 @@ public class MainActivity extends AppCompatActivity  {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == EDIT_REQUEST) {
 
-            if (resultCode == Activity.RESULT_OK) {
+            if (resultCode ==RESULT_OK) {
 
                 //getPosition from returnIntent
                 int editedNotePosition = data.getIntExtra("position", -1);
 
                 mAdapter.updateNote(editedNotePosition,
                         data.getStringExtra("title"),
-                        data.getStringExtra("description"));
+                        data.getStringExtra("description"),
+                        data.getBooleanExtra("favourite",false));
                 db.updateNote(mAdapter.getNote(editedNotePosition));
             }
             if(resultCode == RESUL_REMOVE_NOTE){
@@ -158,7 +153,6 @@ public class MainActivity extends AppCompatActivity  {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
 
 
                     }
